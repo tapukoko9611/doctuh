@@ -6,6 +6,7 @@ import 'controllers/auth_controller.dart';
 import 'pages/login_page.dart';
 import 'pages/signup_page.dart';
 import 'pages/home_page.dart';
+import 'pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,12 +25,16 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialBinding: AuthBinding(),
+      debugShowCheckedModeBanner: false,
       getPages: [
+        GetPage(name: '/', page: () => SplashPage()),
+        GetPage(name: '/splash', page: () => SplashPage()),
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/signup', page: () => SignUpPage()),
         GetPage(name: '/home', page: () => HomePage()),
+        GetPage(name: '/auth_wrapper', page: () => AuthWrapper()),
       ],
-      home: AuthWrapper(),
+      home: SplashPage(),
     );
   }
 }
