@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/signup', page: () => SignUpPage()),
-        GetPage(name: '/home', page: () => HomePage(title: "Doctuh",)),
+        GetPage(name: '/home', page: () => HomePage()),
       ],
       home: AuthWrapper(),
     );
@@ -55,7 +55,7 @@ class AuthWrapper extends StatelessWidget {
           ),
         );
       } else {
-        return authController.isLoggedIn.value ? HomePage(title: "Doctuh") : LoginPage();
+        return authController.isLoggedIn.value ? HomePage() : LoginPage();
       }
     });
   }
