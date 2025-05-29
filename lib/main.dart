@@ -1,4 +1,5 @@
 import 'package:doctuh/pages/login_page.dart';
+import 'package:doctuh/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: LoginPage()
+      home: SignUpPage()
     );
   }
 }
