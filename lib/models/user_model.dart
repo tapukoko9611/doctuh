@@ -3,22 +3,28 @@ import 'dart:convert';
 class User {
   String name;
   String email;
+  String countryCode; // New field
+  String mobileNumber; // New field
   String password;
-  String? profilePic;
+  String? profileImageUrl;
 
   User({
     required this.name,
     required this.email,
+    required this.countryCode, // Add to constructor
+    required this.mobileNumber, // Add to constructor
     required this.password,
-    this.profilePic,
+    this.profileImageUrl,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'email': email,
+      'countryCode': countryCode, // Include in JSON
+      'mobileNumber': mobileNumber, // Include in JSON
       'password': password,
-      'profilePic': profilePic,
+      'profileImageUrl': profileImageUrl,
     };
   }
 
@@ -26,17 +32,17 @@ class User {
     return User(
       name: json['name'],
       email: json['email'],
+      countryCode: json['countryCode'], // Read from JSON
+      mobileNumber: json['mobileNumber'], // Read from JSON
       password: json['password'],
-      profilePic: json['profilePic'],
+      profileImageUrl: json['profileImageUrl'],
     );
   }
 
-  // what we do here is encode all the users and store in local storage
   static String encode(List<User> users) => json.encode(
     users.map<Map<String, dynamic>>((user) => user.toJson()).toList(),
   );
 
-  // what we do here is decode the object from local storage and convert each of them into user object
   static List<User> decode(String usersString) =>
       (json.decode(usersString) as List<dynamic>)
           .map<User>((item) => User.fromJson(item))

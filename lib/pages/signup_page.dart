@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
 
 class SignUpPage extends StatelessWidget {
+  final AuthController authController = Get.find<AuthController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController countryCodeController = TextEditingController(text: '+20'); // Default country code
+  final TextEditingController countryCodeController = TextEditingController(text: '+91');
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  // Removed confirmPasswordController
+
+  SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
-        ),
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -28,7 +23,7 @@ class SignUpPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/doctor_logo.png', // Your logo path
+                'assets/doctor.png', // Your logo path
                 height: 120,
               ),
               const SizedBox(height: 20),
@@ -41,7 +36,7 @@ class SignUpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-
+              
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
@@ -72,7 +67,7 @@ class SignUpPage extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    width: 80, // Adjust width as needed
+                    width: 80,
                     child: TextField(
                       controller: countryCodeController,
                       keyboardType: TextInputType.phone,
@@ -105,9 +100,9 @@ class SignUpPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              TextField(
+              Obx(() => TextField(
                 controller: passwordController,
-                obscureText: true, // Always obscure password for now
+                obscureText: authController.showPassword.value? false: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   hintText: 'Create a password',
@@ -116,25 +111,34 @@ class SignUpPage extends StatelessWidget {
                   ),
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.visibility_off), // Placeholder
+                    icon: authController.showPassword.value? const Icon(Icons.visibility_off): const Icon(Icons.visibility),
                     onPressed: () {
-                      // Toggle password visibility (add a RxBool in controller if needed)
+                      authController.toggleShowPassword();
                     },
                   ),
                 ),
-              ),
+              )),
               const SizedBox(height: 30),
 
-              ElevatedButton(
+              Obx(() => authController.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
                 onPressed: () {
                   if (emailController.text.isEmpty ||
                       passwordController.text.isEmpty ||
                       nameController.text.isEmpty ||
                       mobileNumberController.text.isEmpty ||
                       countryCodeController.text.isEmpty) {
-                    Get.snackbar('Error', 'Please fill all fields.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red.withOpacity(0.7), colorText: Colors.white);
+                    Get.snackbar('Error', 'Please fill all fields...', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red.withOpacity(0.7), colorText: Colors.white);
                     return;
                   }
+                  authController.signUp(
+                    nameController.text.trim(),
+                    emailController.text.trim(),
+                    countryCodeController.text.trim(), // Pass country code
+                    mobileNumberController.text.trim(), // Pass mobile number
+                    passwordController.text.trim(),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -148,38 +152,48 @@ class SignUpPage extends StatelessWidget {
                   'Sign Up',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
-              ),
+              )),
+              Obx(() => authController.errorMessage.isNotEmpty
+                  ? Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Text(
+                  authController.errorMessage.value,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              )
+                  : const SizedBox.shrink()),
               const SizedBox(height: 20),
 
               const Text('Or continue with'),
               const SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _socialButton(
                     'assets/facebook_logo.png', // Add Facebook logo to assets
                         () {
-                      Get.snackbar('Coming Soon', 'Facebook signup not implemented.', snackPosition: SnackPosition.BOTTOM);
+                      Get.snackbar('Coming Soon', 'Facebook signup not implemented...', snackPosition: SnackPosition.BOTTOM);
                     },
                   ),
                   const SizedBox(width: 20),
                   _socialButton(
                     'assets/google_logo.png', // Add Google logo to assets
                         () {
-                      Get.snackbar('Coming Soon', 'Google signup not implemented.', snackPosition: SnackPosition.BOTTOM);
+                      Get.snackbar('Coming Soon', 'Google signup not implemented...', snackPosition: SnackPosition.BOTTOM);
                     },
                   ),
                 ],
               ),
-              const SizedBox(height: 40),
 
+              const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("You have account already?"),
+                  const Text("Have an account already?"),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed('/login'); // Navigate back to login page
+                    },
                     child: const Text(
                       'Sign In',
                       style: TextStyle(color: Colors.blueAccent),
